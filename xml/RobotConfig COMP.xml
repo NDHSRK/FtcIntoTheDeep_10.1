@@ -1,0 +1,117 @@
+<RobotConfig>
+
+  <DRIVE_TRAIN configured="yes">
+    <multiple_motors model="goBILDA 5203 Yellow Jacket Planetary Gear Motor 5203-2402-0014"
+      clicks_per_motor_rev="384.5" rpm="435.0" wheel_diameter_in="4.0">
+      <left_front_drive device_name="lf" direction="REVERSE" />
+      <right_front_drive device_name="rf" direction="FORWARD" />
+      <left_back_drive device_name="lb" direction="REVERSE" />
+      <right_back_drive device_name="rb" direction="FORWARD" />
+    </multiple_motors>
+  </DRIVE_TRAIN>
+
+  <!-- TELEOP_SETTINGS will only apply if the drive train is configured
+ in and the selected OpMode is a TeleOp OpMode. -->
+  <TELEOP_SETTINGS>
+    <!-- In production the value is "off" but set to a
+     more detailed level during testing needed. -->
+    <log_level>d</log_level>
+    <!-- Settings for the velocity control buttons on the game controller. -->
+    <drive_train_power>
+      <high>1.0</high>
+      <low>0.5</low>
+    </drive_train_power>
+  </TELEOP_SETTINGS>
+
+  <ELEVATOR configured="no">
+    <multiple_motors model="goBILDA 5203 Yellow Jacket Planetary Gear Motor 5203-2402-0019"
+      clicks_per_motor_rev="537.7" rpm="312.0">
+      <left_elevator device_name="left_elevator" direction="FORWARD" />
+      <right_elevator device_name="right_elevator" direction="REVERSE" />
+    </multiple_motors>
+    <velocity>1.0</velocity>
+    <velocity_down>0.8</velocity_down>
+    <positions>
+      <ground>0</ground>
+      <safe>145</safe>
+      <pixel_clearance>200</pixel_clearance>
+      <drone>3495</drone>
+      <autonomous>2900</autonomous>
+      <autonomous_high>3500</autonomous_high>
+      <level_1>3398</level_1>
+      <level_2>4496</level_2>
+      <level_3>5086</level_3>
+      <on_truss>3600</on_truss>
+      <above_truss>4490</above_truss>
+    </positions>
+  </ELEVATOR>
+
+  <INTAKE configured="no">
+    <single_motor model="goBILDA 5203 Yellow Jacket Planetary Gear Motor 5203-2402-0019"
+      clicks_per_motor_rev="537.7" rpm="312.0">
+      <intake device_name="intake_main" direction="FORWARD" />
+    </single_motor>
+    <velocity>0.7</velocity>
+    <positions>
+      <rest>0</rest>
+      <intake>0</intake>
+      <deliver_front>400</deliver_front>
+      <deliver_back>1300</deliver_back>
+    </positions>
+  </INTAKE>
+
+  <!-- Servos -->
+
+  <DRONE_LAUNCHER configured="no">
+    <single_servo model="goBilda Dual Mode Servo 2000-0025-0004">
+      <drone_launcher device_name="drone_launcher" />
+    </single_servo>
+    <positions>
+      <hold>0.0</hold>
+      <launch>0.1</launch> <!-- CenterStage value. -->
+    </positions>
+  </DRONE_LAUNCHER>
+
+  <!-- LED Ring -->
+  <!-- The LED ring is identified as a RevBlinkinLedDriver. -->
+  <LED_RING configured="no">
+    <rev_blinkin_led_driver model="Rev Robotics Blinkin LED Driver REV-11-1105">
+      <led device_name="led_ring" />
+    </rev_blinkin_led_driver>
+  </LED_RING>
+
+  <!-- Sensors -->
+  <SAMPLE_SENSOR configured="no">
+    <sensor model="Rev Robotics V3 Color/Distance Sensor">
+      <sample_sensor device_name="sample_sensor" />
+    </sensor>
+    <sample_in_carrier_max>2.5</sample_in_carrier_max>
+    <hold_led_on>2000</hold_led_on>
+  </SAMPLE_SENSOR>
+
+  <VISION_PORTAL_WEBCAM configured="no">
+    <webcam_set>
+      <webcam>
+        <internal_id>front_webcam</internal_id>
+        <!-- StreamCam #2 (HOME)  -->
+        <serial_number>845BC8D5</serial_number>
+        <resolution_width>640</resolution_width>
+        <resolution_height>480</resolution_height>
+        <field_of_view>78.0</field_of_view>
+        <distance_camera_lens_to_robot_center>4.0</distance_camera_lens_to_robot_center>
+        <offset_camera_lens_from_robot_center>0.0</offset_camera_lens_from_robot_center>
+        <processor_set>
+          <processor>april_tag</processor>
+          <processor>raw_frame</processor>
+        </processor_set>
+        <webcam_calibration_for_apriltags>
+          <focal_length_x>622.001</focal_length_x>
+          <focal_length_y>622.001</focal_length_y>
+          <principal_point_x>319.803</principal_point_x>
+          <principal_point_y>241.251</principal_point_y>
+        </webcam_calibration_for_apriltags>
+      </webcam>
+    </webcam_set>
+  </VISION_PORTAL_WEBCAM>
+
+</RobotConfig>
