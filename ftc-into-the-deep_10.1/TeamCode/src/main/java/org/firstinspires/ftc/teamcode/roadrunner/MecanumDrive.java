@@ -45,35 +45,34 @@ import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
-import org.firstinspires.ftc.teamcode.robot.FTCRobot;
 
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+//## 09-26-2024 This is a copy of the file which the Notre Dame students
+// modified during the tuning of robot 21325-RC-B.
 @Config
 public final class MecanumDrive {
-
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD; //##PY set to FORWARD
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.UP; //## PY set to UP
+                RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
-        public double inPerTick = 0.002943; //##PY from ForwardPushTest
-
-        public double lateralInPerTick = 0.0023218229961435143; //##PY from LateralRampLogger
-        public double trackWidthTicks = 4866.460518994749; //##PY from AngularRampLogger
+        public double inPerTick = 0.0019682;
+        public double lateralInPerTick = 0.0015658710699053497;
+        public double trackWidthTicks = 6526.09372027314;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.362384036443848; //##PY from ForwardRampLogger
-        public double kV = 0.0005904533025099864; //##PY from ForwardRampLogger
-        public double kA = 0.0001; //##PY starting point per documentation 0.0000001
+        public double kS = 0.8404539550527654;
+        public double kV = 0.0004045225776854795;
+        public double kA = 0.0001;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -85,9 +84,9 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 1.0; //##PY set after running ManualFeedbackTuner
-        public double lateralGain = 10.0; // 5.0; //##PY set after running ManualFeedbackTuner
-        public double headingGain = 10.0; //##PY set after running ManualFeedbackTuner
+        public double axialGain = 1.0;
+        public double lateralGain = 5.0;
+        public double headingGain = 5.0; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -209,13 +208,6 @@ public final class MecanumDrive {
         }
     }
 
-    //**TODO Need this constructor to reference the following variables
-    // *somewhere* so that the device names for the drive train motors
-    // are not hardcoded here.
-    //     //##PY - added
-    //    private final String leftFrontDeviceName, rightFrontDeviceName, leftBackDeviceName, rightBackDeviceName;
-    // So FTCRobot needs to process the XML for the drive train to extract the device names
-    // into a static map for Roadrunner. Lame.
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
@@ -225,15 +217,12 @@ public final class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        //##PY Workaround for hardcoded device names in the Roadrunner source.
-        FTCRobot.DriveTrainDeviceNames driveTrainDeviceNames = FTCRobot.getDriveTrainDeviceNames();
-
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.LEFT_FRONT_DRIVE)); //##PY changed from hardcoded  "leftFront"
-        leftBack = hardwareMap.get(DcMotorEx.class, driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.LEFT_BACK_DRIVE)); //##PY changed
-        rightBack = hardwareMap.get(DcMotorEx.class, driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.RIGHT_BACK_DRIVE)); //##PY changed
-        rightFront = hardwareMap.get(DcMotorEx.class, driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.RIGHT_FRONT_DRIVE)); //## changed
+        leftFront = hardwareMap.get(DcMotorEx.class, "lf"); //##PY changed from "leftFront" to "lf"
+        leftBack = hardwareMap.get(DcMotorEx.class, "lb"); //##PY changed to "lb"
+        rightBack = hardwareMap.get(DcMotorEx.class, "rb"); //##PY changed to "rb"
+        rightFront = hardwareMap.get(DcMotorEx.class, "rf"); //## changed to "rf"
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -254,11 +243,7 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        //##PY The added parameters are a workaround for hardcoded device names in
-        // the Roadrunner source.
-        localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick,
-                driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.LEFT_FRONT_DRIVE),
-                driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.RIGHT_FRONT_DRIVE));
+        localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick);
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }

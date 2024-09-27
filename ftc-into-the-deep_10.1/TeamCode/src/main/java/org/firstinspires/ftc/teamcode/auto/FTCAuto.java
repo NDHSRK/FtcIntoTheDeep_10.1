@@ -8,6 +8,7 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -614,24 +615,192 @@ public class FTCAuto {
         //**TODO fill in runBlueA4;
     }
 
+    //**TODO RED_F3 The Action instances can be created during the init phase -
+    // but for now leave them here for readability.
+    //**TODO RED_F3 Try calling fresh() instead of hard-coding the pose.
     // The field MecanumDrive roadrunnerDrive has already been set with the
     // starting pose.
     private void runRedF3() {
-        //**TODO fill in runRedF3;
-    }
+        Action toSubmersible = roadrunnerDrive.actionBuilder(roadrunnerDrive.pose)
+                .splineToSplineHeading(new Pose2d(-8.5, -37.0, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .build();
 
-    private void runRedF4() {
-        // The field drive.pose is not actually used here.
-        Action hangSpecimen = roadrunnerDrive.actionBuilder(roadrunnerDrive.pose)
-                .waitSeconds(2)
+        Action hangSpecimen = roadrunnerDrive.actionBuilder(new Pose2d(-10, -37.0, Math.toRadians(90.00)))
+                .waitSeconds(1)
+                .build();
+
+        Action toSample1 = roadrunnerDrive.actionBuilder(new Pose2d(-10, -37.0, Math.toRadians(90.00)))
+                .lineToY(-48)
+                .setTangent(Math.toRadians(135))
+                .splineToSplineHeading(new Pose2d(-37, -35, Math.toRadians(135.0)), Math.toRadians(135.0))
+                .build();
+
+        Action getSample1 = roadrunnerDrive.actionBuilder(new Pose2d(-37, -35, Math.toRadians(135.0)))
+                .waitSeconds(1)
+                .build();
+
+        Action toBasket1 = roadrunnerDrive.actionBuilder(new Pose2d(-37, -35, Math.toRadians(135.0)))
+                .setTangent(Math.toRadians(225))
+                .strafeToSplineHeading(new Vector2d(-52, -50), Math.toRadians(45))
+                .build();
+
+        Action depositBasket1 = roadrunnerDrive.actionBuilder(new Pose2d(-52, -50, Math.toRadians(45)))
+                .waitSeconds(1)
+                .build();
+
+        Action toSample2 = roadrunnerDrive.actionBuilder(new Pose2d(-52, -50, Math.toRadians(45)))
+                .setTangent(Math.toRadians(90))
+                .strafeToSplineHeading(new Vector2d(-58, -40), Math.toRadians(90.0))
+                .build();
+
+        Action getSample2 = roadrunnerDrive.actionBuilder(new Pose2d(-54, -40, Math.toRadians(90)))
+                .waitSeconds(1)
+                .build();
+
+        Action toBasket2 = roadrunnerDrive.actionBuilder(new Pose2d(-54, -40, Math.toRadians(90)))
+                .strafeToSplineHeading(new Vector2d(-52, -50), Math.toRadians(45))
+                .build();
+
+        Action depositBasket2 = roadrunnerDrive.actionBuilder(new Pose2d(-52, -50, Math.toRadians(45)))
+                .waitSeconds(1)
+                .build();
+
+//        Action toSample3 = drive.actionBuilder(new Pose2d(-52,-50, Math.toRadians(225)))
+//                .setTangent(Math.toRadians(135))
+//                .strafeToSplineHeading(new Vector2d(-50, -26), Math.toRadians(180.0))
+//                .setTangent(0)
+//                .lineToX(-58)
+//                .build();
+//
+//        Action getSample3 = drive.actionBuilder(new Pose2d(-58,-26, Math.toRadians(180)))
+//                .waitSeconds(1)
+//                .build();
+//
+//        Action toBasket3 = drive.actionBuilder(new Pose2d(-58,-26, Math.toRadians(180)))
+//                .setTangent(0)
+//                .lineToX(-50)
+//                .strafeToSplineHeading(new Vector2d(-52,-50), Math.toRadians(225))
+//                .build();
+//
+//        Action depositBasket3 = drive.actionBuilder(new Pose2d(-52,-50, Math.toRadians(225)))
+//                .waitSeconds(1)
+//                .build();
+
+        Action parkSubmersible = roadrunnerDrive.actionBuilder(new Pose2d(-52, -50, Math.toRadians(45)))
+                .setTangent(0)
+                .splineToSplineHeading(new Pose2d(-44, -10, Math.toRadians(0)), Math.toRadians(90))
+                .setTangent(0)
+                .lineToX(-33)
                 .build();
 
         Actions.runBlocking(
                 new SequentialAction(
-                        TrajectoryActionCollection.buildTrajectoryAction(roadrunnerDrive, roadrunnerDrive.pose, TrajectoryActionCollection.TrajectoryActionId.RED_F4_TO_SUBMERSIBLE),
+                        toSubmersible,
                         hangSpecimen,
-                        new LinkedTrajectoryAction(roadrunnerDrive, TrajectoryActionCollection.TrajectoryActionId.RED_F4_TO_SAMPLE_1)
+                        toSample1,
+                        getSample1,
+                        toBasket1,
+                        depositBasket1,
+                        toSample2,
+                        getSample2,
+                        toBasket2,
+                        depositBasket2,
+                        parkSubmersible
                 )
+        );
+    }
+
+    //**TODO RED_F4 The Action instances can be created during the init phase -
+    // but for now leave them here for readability.
+    //**TODO RED_F4 Try calling fresh() instead of hard-coding the pose.
+    private void runRedF4() {
+        //**TODO RED_F4 You don't need to hard-code the pose for the first Action because
+        // MecanumDrive has already been constructed with this pose.
+        Action toSubmersible = roadrunnerDrive.actionBuilder(roadrunnerDrive.pose) // new Pose2d(14.76, -62.5, Math.toRadians(90.00)))
+                .splineToSplineHeading(new Pose2d(10, -37.0, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .build();
+
+        Action hangSpecimen = roadrunnerDrive.actionBuilder(new Pose2d(10, -37.0, Math.toRadians(90.00)))
+                .waitSeconds(1)
+                .build();
+
+        Action toSample1 = roadrunnerDrive.actionBuilder(new Pose2d(10, -37.0, Math.toRadians(90.00)))
+                .lineToY(-48)
+                .setTangent(Math.toRadians(0))
+                .splineToSplineHeading(new Pose2d(36, -34, Math.toRadians(45.0)), Math.toRadians(45.0))
+                .build();
+
+        Action getSample1 = roadrunnerDrive.actionBuilder(new Pose2d(36, -34, Math.toRadians(45.0)))
+                .waitSeconds(1)
+                .build();
+
+        Action toObsZone1 = roadrunnerDrive.actionBuilder(new Pose2d(36, -34, Math.toRadians(45.0)))
+                .setTangent(Math.toRadians(-60))
+                .strafeToSplineHeading(new Vector2d(48, -53), Math.toRadians(-60)) //spline
+                .build();
+
+        Action depositSample1 = roadrunnerDrive.actionBuilder(new Pose2d(48, -53, Math.toRadians(-60)))
+                .waitSeconds(1)
+                .build();
+
+        Action toSample2 = roadrunnerDrive.actionBuilder(new Pose2d(48, -53, Math.toRadians(-60)))
+                .setTangent(Math.toRadians(30))
+                .strafeToSplineHeading(new Vector2d(48, -30), Math.toRadians(30))
+                .build();
+
+        Action getSample2 = roadrunnerDrive.actionBuilder(new Pose2d(48, -30, Math.toRadians(30)))
+                .waitSeconds(1)
+                .build();
+
+        Action toObsZone2 = roadrunnerDrive.actionBuilder(new Pose2d(48, -30, Math.toRadians(30)))
+                .setTangent(Math.toRadians(-60))
+                .strafeToSplineHeading(new Vector2d(48, -55), Math.toRadians(-60))
+                .build();
+
+        Action depositSample2 = roadrunnerDrive.actionBuilder(new Pose2d(48, -55, Math.toRadians(-60)))
+                .waitSeconds(1)
+                .build();
+
+        Action toSample3 = roadrunnerDrive.actionBuilder(new Pose2d(48, -55, Math.toRadians(-60)))
+                .setTangent(0)
+                .strafeToSplineHeading(new Vector2d(50, -22), 0)
+                .setTangent(0)
+                .lineToX(56)
+                .build();
+
+        Action getSample3 = roadrunnerDrive.actionBuilder(new Pose2d(56, -22, 0))
+                .waitSeconds(1)
+                .build();
+
+        Action toObsZone3 = roadrunnerDrive.actionBuilder(new Pose2d(56, -22, 0))
+                .lineToX(50)
+                .strafeToSplineHeading(new Vector2d(48, -57), Math.toRadians(-60))
+                .build();
+
+        Action depositSample3 = roadrunnerDrive.actionBuilder(new Pose2d(48, -55, Math.toRadians(-60)))
+                .waitSeconds(1)
+                .build();
+
+        Action park = roadrunnerDrive.actionBuilder(new Pose2d(48, -55, Math.toRadians(-60)))
+                .build();
+
+        Actions.runBlocking(
+                new SequentialAction(
+                        toSubmersible,
+                        hangSpecimen,
+                        toSample1,
+                        getSample1,
+                        toObsZone1,
+                        depositSample1,
+                        toSample2,
+                        getSample2,
+                        toObsZone2,
+                        depositSample2,
+                        toSample3,
+                        getSample3,
+                        toObsZone3,
+                        depositSample3,
+                        park)
         );
     }
 

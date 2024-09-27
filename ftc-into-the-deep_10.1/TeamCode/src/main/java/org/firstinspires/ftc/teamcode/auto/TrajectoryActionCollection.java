@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import org.firstinspires.ftc.ftcdevcommon.AutonomousRobotException;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 
+//**TODO Archive this class if the call to .fresh() works.
 public class TrajectoryActionCollection {
 
     private static final String TAG = TrajectoryActionCollection.class.getSimpleName();

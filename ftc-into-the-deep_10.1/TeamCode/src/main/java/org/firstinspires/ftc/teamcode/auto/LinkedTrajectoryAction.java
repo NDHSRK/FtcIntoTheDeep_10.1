@@ -39,6 +39,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
                 .build();
  */
 
+//**TODO Archive this class if the call to .fresh() works.
 // Use this class to defer the construction of an Action until the end pose of
 // the previous Action has been set. Typically used in a SequentialAction.
 public class LinkedTrajectoryAction implements Action {
