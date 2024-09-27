@@ -10,15 +10,13 @@ import org.firstinspires.ftc.teamcode.robot.FTCRobot;
 import javax.xml.xpath.XPathExpressionException;
 
 public class DroneLauncherServo {
-
+    private static final String TAG = DroneLauncherServo.class.getSimpleName();
     public enum DroneLauncherState {HOLD, LAUNCH}
-    public final Servo servo;
+    private final Servo servo;
     private final double hold;
     private final double launch;
 
     public DroneLauncherServo(HardwareMap pHardwareMap, XPathAccess pConfigXPath, String pServoElementName, FTCRobot.ServoId pServoId) throws XPathExpressionException {
-        String TAG = DroneLauncherServo.class.getSimpleName();
-
         // Get the configuration from RobotConfig.xml.
         RobotLogCommon.c(TAG, "Defining the servo for the " + pServoElementName);
         RobotLogCommon.c(TAG, "Model " + pConfigXPath.getRequiredText("single_servo/@model"));

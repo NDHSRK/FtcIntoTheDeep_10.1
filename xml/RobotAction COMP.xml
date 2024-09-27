@@ -10,7 +10,7 @@
         <actions>
 
             <!-- LAUNCH_DRONE/ -->
-            
+
             <!-- RUN_INTAKE/ -->
 
             <!-- RUN_ELEVATOR/ -->
@@ -79,39 +79,44 @@
             <log_level>d</log_level>
         </parameters>
         <actions>
-            <RUN_BLUE_A3/>
+            <RUN_BLUE_A3 />
         </actions>
     </OpMode>
-    
+
     <OpMode id="BLUE_A4">
         <parameters>
             <log_level>d</log_level>
         </parameters>
         <actions>
-            <RUN_BLUE_A4/>
+            <RUN_BLUE_A4 />
         </actions>
     </OpMode>
-    
+
     <OpMode id="RED_F3">
         <parameters>
             <log_level>d</log_level>
             <starting_position>
-                <x>14.76</x>
-                <y>-62.89</y>
+                <x>-14</x>
+                <y>-62.5</y>
                 <angle>90</angle>
             </starting_position>
         </parameters>
         <actions>
-            <RUN_RED_F3/>
+            <RUN_RED_F3 />
         </actions>
     </OpMode>
-    
+
     <OpMode id="RED_F4">
         <parameters>
             <log_level>d</log_level>
+            <starting_position>
+                <x>14.76</x>
+                <y>-62.5</y>
+                <angle>90</angle>
+            </starting_position>
         </parameters>
         <actions>
-            <RUN_RED_F4/>
+            <RUN_RED_F4 />
         </actions>
     </OpMode>
 

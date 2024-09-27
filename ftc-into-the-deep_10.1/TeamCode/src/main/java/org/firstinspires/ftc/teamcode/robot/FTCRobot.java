@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.robot.device.motor.ElevatorMotion;
 import org.firstinspires.ftc.teamcode.robot.device.motor.Intake;
 import org.firstinspires.ftc.teamcode.robot.device.motor.SingleMotorMotion;
 import org.firstinspires.ftc.teamcode.robot.device.motor.TeleOpDriveTrain;
+import org.firstinspires.ftc.teamcode.robot.device.sensor.SampleColorSensor;
 import org.firstinspires.ftc.teamcode.robot.device.servo.DroneLauncherServo;
 import org.firstinspires.ftc.teamcode.xml.RobotConfigXML;
 import org.firstinspires.ftc.teamcode.xml.StartParameters;
@@ -40,6 +41,7 @@ public class FTCRobot {
     public static final String ELEVATOR_ELEMENT_NAME = "ELEVATOR";
     public static final String INTAKE_ELEMENT_NAME = "INTAKE";
     public static final String DRONE_LAUNCHER_ELEMENT_NAME = "DRONE_LAUNCHER";
+    public static final String SAMPLE_COLOR_SENSOR_ELEMENT_NAME = "SAMPLE_COLOR_SENSOR";
     public static final String VISION_PORTAL_WEBCAM_ELEMENT_NAME = "VISION_PORTAL_WEBCAM";
 
     // All motors on the robot for this year's game.
@@ -52,6 +54,10 @@ public class FTCRobot {
 
     public enum ServoId {
         DRONE_LAUNCHER //**TODO for testing XML
+    }
+
+    public enum SensorId {
+        SAMPLE_COLOR
     }
 
     private final HardwareMap hardwareMap;
@@ -71,6 +77,7 @@ public class FTCRobot {
     public final Intake intake;
     public final SingleMotorMotion intakeMotion;
     public final DroneLauncherServo droneLauncherServo;
+    public final SampleColorSensor sampleColorSensor;
 
     // Instantiate here in FTCRobot so that these objects
     // can be shared between TeleOp and FTCAuto when it is
@@ -184,6 +191,15 @@ public class FTCRobot {
                 droneLauncherServo = new DroneLauncherServo(hardwareMap, configXPath, DRONE_LAUNCHER_ELEMENT_NAME, ServoId.DRONE_LAUNCHER);
             } else {
                 droneLauncherServo = null;
+            }
+
+            // Get the configuration for the sample color sensor.
+            configXPath = configXML.getPath(SAMPLE_COLOR_SENSOR_ELEMENT_NAME);
+            String sampleColorSensorConfiguration = configXPath.getRequiredTextInRange("@configured", configXPath.validRange("yes", "no"));
+            if (sampleColorSensorConfiguration.equals("yes")) {
+                sampleColorSensor = new SampleColorSensor(hardwareMap, configXPath, SAMPLE_COLOR_SENSOR_ELEMENT_NAME, SensorId.SAMPLE_COLOR);
+            } else {
+                sampleColorSensor = null;
             }
 
             // In a competition the webcam(s) would be configured in and

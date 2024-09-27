@@ -1,8 +1,8 @@
 <RobotConfig>
 
   <DRIVE_TRAIN configured="yes">
-    <multiple_motors model="goBILDA 5203 Yellow Jacket Planetary Gear Motor 5203-2402-0014"
-      clicks_per_motor_rev="384.5" rpm="435.0" wheel_diameter_in="4.0">
+    <multiple_motors model="goBILDA 5203 Yellow Jacket Planetary Gear Motor 5203-2402-0019"
+    clicks_per_motor_rev="537.7" rpm="312.0">
       <left_front_drive device_name="lf" direction="REVERSE" />
       <right_front_drive device_name="rf" direction="FORWARD" />
       <left_back_drive device_name="lb" direction="REVERSE" />
@@ -81,13 +81,29 @@
   </LED_RING>
 
   <!-- Sensors -->
-  <SAMPLE_SENSOR configured="no">
+  <SAMPLE_COLOR_SENSOR configured="no">
     <sensor model="Rev Robotics V3 Color/Distance Sensor">
-      <sample_sensor device_name="sample_sensor" />
+      <sample_color device_name="sample_color" />
     </sensor>
-    <sample_in_carrier_max>2.5</sample_in_carrier_max>
-    <hold_led_on>2000</hold_led_on>
-  </SAMPLE_SENSOR>
+    <hsv_hue_range>
+      <blue>
+        <low></low>
+        <high></high>
+      </blue>
+      <red>
+        <low></low>
+        <high></high>
+      </red>
+      <yellow>
+        <low></low>
+        <high></high>
+      </yellow>
+    </hsv_hue_range>
+    <distance_range>
+      <low></low>
+      <high></high>
+    </distance_range>
+  </SAMPLE_COLOR_SENSOR>
 
   <VISION_PORTAL_WEBCAM configured="no">
     <webcam_set>
