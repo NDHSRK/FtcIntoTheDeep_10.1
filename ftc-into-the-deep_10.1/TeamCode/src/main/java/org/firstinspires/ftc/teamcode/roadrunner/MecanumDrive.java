@@ -45,6 +45,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
+import org.firstinspires.ftc.teamcode.robot.FTCRobot;
 
 import java.lang.Math;
 import java.util.Arrays;
@@ -52,7 +53,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 //## 09-26-2024 This is a copy of the file which the Notre Dame students
-// modified during the tuning of robot 21325-RC-B.
+// modified during the tuning of robot 21325-RC-B. It has been modified
+// to get the drive train device names from FTCRobot instead of using
+// the hardcoded names from the Roadrunner quickstart.
 @Config
 public final class MecanumDrive {
     public static class Params {
@@ -208,6 +211,9 @@ public final class MecanumDrive {
         }
     }
 
+    //##PY Modified this constructor to reference the drive train and
+    // odometry wheel device names in FTCRobot instead of hard-coding
+    // them as is done in the Roadrunner quickstart.
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
 
@@ -217,12 +223,15 @@ public final class MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
+        //##PY Workaround for hardcoded device names in the Roadrunner source.
+        FTCRobot.DriveTrainDeviceNames driveTrainDeviceNames = FTCRobot.getDriveTrainDeviceNames();
+
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "lf"); //##PY changed from "leftFront" to "lf"
-        leftBack = hardwareMap.get(DcMotorEx.class, "lb"); //##PY changed to "lb"
-        rightBack = hardwareMap.get(DcMotorEx.class, "rb"); //##PY changed to "rb"
-        rightFront = hardwareMap.get(DcMotorEx.class, "rf"); //## changed to "rf"
+        leftFront = hardwareMap.get(DcMotorEx.class, driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.LEFT_FRONT_DRIVE)); //##PY changed from hardcoded  "leftFront"
+        leftBack = hardwareMap.get(DcMotorEx.class, driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.LEFT_BACK_DRIVE)); //##PY changed
+        rightBack = hardwareMap.get(DcMotorEx.class, driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.RIGHT_BACK_DRIVE)); //##PY changed
+        rightFront = hardwareMap.get(DcMotorEx.class, driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.RIGHT_FRONT_DRIVE)); //## changed
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -243,7 +252,11 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick);
+        //##PY The added the two String parameters are a workaround for hardcoded
+        // device names from the Roadrunner source.
+        localizer = new TwoDeadWheelLocalizer(hardwareMap, lazyImu.get(), PARAMS.inPerTick,
+                driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.LEFT_FRONT_DRIVE),
+                driveTrainDeviceNames.deviceNames.get(FTCRobot.MotorId.RIGHT_FRONT_DRIVE));
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }

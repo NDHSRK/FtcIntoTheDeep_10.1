@@ -45,12 +45,17 @@ public final class TwoDeadWheelLocalizer implements Localizer {
     private double lastRawHeadingVel, headingVelOffset;
     private boolean initialized;
 
-    public TwoDeadWheelLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick) {
+    //## 09-26-2024 This is a copy of the file which the Notre Dame students
+    // modified during the tuning of robot 21325-RC-B. It has been modified
+    // to get the odometry wheel device names from two String parameters
+    // instead of using the hardcoded names from the Roadrunner quickstart.
+    public TwoDeadWheelLocalizer(HardwareMap hardwareMap, IMU imu, double inPerTick,
+                                 String pParDeviceName, String pPerpDeviceName) {
         // TODO: make sure your config has **motors** with these names (or change them)
         //   the encoders should be plugged into the slot matching the named motor
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        par = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "lf")));
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "rf")));
+        par = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, pParDeviceName))); //##PY changed from "par"
+        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, pPerpDeviceName))); //## PY changed from "perp"
 
         // TODO: reverse encoder directions if needed
         //   par.setDirection(DcMotorSimple.Direction.REVERSE);

@@ -57,10 +57,11 @@ public class FTCRobot {
     private final HardwareMap hardwareMap;
     public final StartParameters startParameters;
 
-    // Needs to be static so that Roadrunner MecanumDrive can see it.
+    //## Needs to be static so that Roadrunner MecanumDrive can see it.
     // This makes for a really unfortunate dependency - FTCRobot must
     // be constructed before MecanumDrive; otherwise driveTrainDeviceNames
-    // will be null.
+    // will be null. We do this to be consistent with our architecture:
+    // the device names originate in RobotConfig.xml.
     private static DriveTrainDeviceNames driveTrainDeviceNames;
     public final TeleOpDriveTrain teleOpDriveTrain;
     public final boolean roadrunnerDriveTrainInConfiguration;
