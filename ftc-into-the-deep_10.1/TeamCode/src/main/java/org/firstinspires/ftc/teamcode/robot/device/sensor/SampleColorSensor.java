@@ -22,7 +22,17 @@ public class SampleColorSensor {
         BLUE, RED, YELLOW, NPOS
     }
 
+    public static final double DISTANCE_NPOS = -1.0;
+
     private final NormalizedColorSensor colorSensor;
+    private final double blue_low;
+    private final double blue_high;
+    private final double red_low;
+    private final double red_high;
+    private final double yellow_low;
+    private final double yellow_high;
+    private final double distance_low;
+    private final double distance_high;
 
     public SampleColorSensor(HardwareMap pHardwareMap, XPathAccess pConfigXPath, String pSensorElementName, FTCRobot.SensorId pSensorId) throws XPathExpressionException {
 
@@ -47,18 +57,27 @@ public class SampleColorSensor {
            <low></low>
            <high></high>
          </yellow>
-       </hsv_hue_range>
-       <distance_range>
-         <low></low>
-         <high></high>
-       </distance_range>
+        </hsv_hue_range>
+        <distance_range>
+           <low></low>
+           <high></high>
+        </distance_range>
        */
+
+        // Extract values from RobotConfig.xml.
+        blue_low = pConfigXPath.getRequiredDouble("hsv_hue_range/blue/low");
+        blue_high = pConfigXPath.getRequiredDouble("hsv_hue_range/blue/high");
+        red_low = pConfigXPath.getRequiredDouble("hsv_hue_range/red/low");
+        red_high = pConfigXPath.getRequiredDouble("hsv_hue_range/red/high");
+        yellow_low = pConfigXPath.getRequiredDouble("hsv_hue_range/yellow/low");
+        yellow_high = pConfigXPath.getRequiredDouble("hsv_hue_range/yellow/high");
+
+        distance_low = pConfigXPath.getRequiredDouble("distance_range/yellow/low");
+        distance_high = pConfigXPath.getRequiredDouble("distance_range/yellow/high");
     }
 
     //**TODO Put the range-checking logic here.
     public Pair<SampleColor, Double> getColorAndDistance() {
-        double distance = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM);
-        //**TODO return -1.0 if the distance is out of range.
 
         // Get the normalized colors from the sensor.
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
@@ -68,8 +87,16 @@ public class SampleColorSensor {
         Color.colorToHSV(colors.toColor(), hsv);
 
         //**TODO Match the returned hue against our ranges.
+        // Watch out for a range that spans 0.
+        //**TODO Log the final result, e.g.
+        //   RobotLogCommon.d(TAG, "Color sensor hue in range for blue");
 
-        return Pair.create(SampleColor.NPOS, -1.0); //**TODO TEMP
+        // Get the distance from the sensor.
+        double distance = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM);
+        //**TODO return DISTANCE_NPOS if the distance is out of range.
+
+        return Pair.create(SampleColor.NPOS, DISTANCE_NPOS); //**TODO TEMP
     }
+
 }
 
