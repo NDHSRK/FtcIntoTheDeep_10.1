@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.robot.device.sensor;
 
 import android.graphics.Color;
 
+import androidx.core.graphics.ColorUtils;
+
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
