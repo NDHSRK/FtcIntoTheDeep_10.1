@@ -76,14 +76,14 @@ public class SampleColorSensor {
         distance_high = pConfigXPath.getRequiredDouble("distance_range/yellow/high");
     }
 
-    //**TODO Put the range-checking logic here.
     public Pair<SampleColor, Double> getColorAndDistance() {
         SampleColor retColor = SampleColor.NPOS;
         double retDistance =  DISTANCE_NPOS;
 
         // Get the distance from the sensor.
         double distance = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM);
-        //**TODO return DISTANCE_NPOS if the distance is out of range.
+        if (distance >= distance_low && distance <= distance_high)
+            retDistance = distance;
 
         // Get the normalized colors from the sensor.
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
@@ -91,13 +91,25 @@ public class SampleColorSensor {
         // Update the hsvValues array by passing it to Color.colorToHSV().
         float[] hsv = new float[3];
         Color.colorToHSV(colors.toColor(), hsv);
+        float hueOfSample = hsv[0];
 
-        //**TODO Match the returned hue against our ranges.
-        // Watch out for a range that spans 0.
-        //**TODO Log the final result, e.g.
-        //   RobotLogCommon.d(TAG, "Color sensor hue in range for blue");
+        // Match the returned hue against our ranges.
+        if (getColorOfSample(hueOfSample, blue_low, blue_high))
+            retColor = SampleColor.BLUE;
+        else if (getColorOfSample(hueOfSample, red_low, red_high))
+            retColor = SampleColor.RED;
+        else if (getColorOfSample(hueOfSample, yellow_low, yellow_high))
+            retColor = SampleColor.YELLOW;
+
+        RobotLogCommon.d(TAG, "Color sensor hue: " + retColor + ", distance " +  retDistance);
 
         return Pair.create(retColor, retDistance);
+    }
+
+    private boolean getColorOfSample(float pHueOfSample, double pLow, double pHigh) {
+        return ((pHueOfSample >= pLow && pHueOfSample <= pHigh) || // normal case
+                (pLow > pHigh) && ((pHueOfSample >= pLow && pHueOfSample <= 360) || // range spans 0
+                        (pHueOfSample >= 0 && pHueOfSample <= pHigh)));
     }
 
 }
