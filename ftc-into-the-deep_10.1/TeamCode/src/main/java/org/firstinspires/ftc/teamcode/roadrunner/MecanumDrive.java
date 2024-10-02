@@ -39,18 +39,31 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.ftcdevcommon.AutonomousRobotException;
+import org.firstinspires.ftc.ftcdevcommon.platform.android.WorkingDirectory;
+import org.firstinspires.ftc.ftcdevcommon.xml.XPathAccess;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.common.RobotConstants;
+import org.firstinspires.ftc.teamcode.common.RobotLogCommon;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.MecanumLocalizerInputsMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
 import org.firstinspires.ftc.teamcode.robot.FTCRobot;
+import org.firstinspires.ftc.teamcode.xml.RobotConfigXML;
+import org.firstinspires.ftc.teamcode.xml.StartParameters;
+import org.firstinspires.ftc.teamcode.xml.StartParametersXML;
+import org.xml.sax.SAXException;
 
+import java.io.IOException;
 import java.lang.Math;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 
 //## 09-26-2024 This is a copy of the file which the Notre Dame students
 // modified during the tuning of robot 21325-RC-B. It has been modified
@@ -224,7 +237,33 @@ public final class MecanumDrive {
         }
 
         //##PY Workaround for hardcoded device names in the Roadrunner source.
-        FTCRobot.DriveTrainDeviceNames driveTrainDeviceNames = FTCRobot.getDriveTrainDeviceNames();
+        String TAG = MecanumDrive.class.getSimpleName();
+        FTCRobot.DriveTrainDeviceNames driveTrainDeviceNames;
+
+        // Get the drive train configuration parameters from RobotConfig XXX.xml.
+        // First get the startup parameters (including the exact file name of
+        // RobotConfig XXX.xml).
+        String xmlDirectory = WorkingDirectory.getWorkingDirectory() + RobotConstants.XML_DIR;
+        try {
+            StartParametersXML startParametersXML = new StartParametersXML(xmlDirectory);
+            StartParameters startParameters = startParametersXML.getStartParameters();
+            RobotLogCommon.c(TAG, "Configuring the Roadrunner drivetrain from " + startParameters.robotConfigFilename);
+
+            RobotConfigXML configXML = new RobotConfigXML(startParameters.robotConfigFilename);
+            XPathAccess configXPath = configXML.getPath(FTCRobot.DRIVE_TRAIN_ELEMENT_NAME);
+            String driveTrainYesNo = configXPath.getRequiredTextInRange("@configured", configXPath.validRange("yes", "no"));
+            if (driveTrainYesNo.equals("yes")) {
+                // Get the drive train device names from RobotConfig XXX.xml.
+                driveTrainDeviceNames = new FTCRobot.DriveTrainDeviceNames(configXPath, FTCRobot.DRIVE_TRAIN_ELEMENT_NAME,
+                        FTCRobot.MotorId.LEFT_FRONT_DRIVE, FTCRobot.MotorId.RIGHT_FRONT_DRIVE,
+                        FTCRobot.MotorId.LEFT_BACK_DRIVE, FTCRobot.MotorId.RIGHT_BACK_DRIVE);
+            } else
+                throw new AutonomousRobotException(TAG, "Drive train must be configured in for Roadrunner");
+        } catch (ParserConfigurationException | SAXException | XPathExpressionException |
+                 IOException ex) {
+            String eMessage = ex.getMessage() == null ? "**no error message**" : ex.getMessage();
+            throw new AutonomousRobotException(TAG, "IOException " + eMessage);
+        }
 
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html

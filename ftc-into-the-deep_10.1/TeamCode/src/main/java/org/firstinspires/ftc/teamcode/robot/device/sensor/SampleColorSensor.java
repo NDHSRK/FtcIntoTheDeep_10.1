@@ -78,6 +78,12 @@ public class SampleColorSensor {
 
     //**TODO Put the range-checking logic here.
     public Pair<SampleColor, Double> getColorAndDistance() {
+        SampleColor retColor = SampleColor.NPOS;
+        double retDistance =  DISTANCE_NPOS;
+
+        // Get the distance from the sensor.
+        double distance = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM);
+        //**TODO return DISTANCE_NPOS if the distance is out of range.
 
         // Get the normalized colors from the sensor.
         NormalizedRGBA colors = colorSensor.getNormalizedColors();
@@ -91,11 +97,7 @@ public class SampleColorSensor {
         //**TODO Log the final result, e.g.
         //   RobotLogCommon.d(TAG, "Color sensor hue in range for blue");
 
-        // Get the distance from the sensor.
-        double distance = ((DistanceSensor) colorSensor).getDistance(DistanceUnit.CM);
-        //**TODO return DISTANCE_NPOS if the distance is out of range.
-
-        return Pair.create(SampleColor.NPOS, DISTANCE_NPOS); //**TODO TEMP
+        return Pair.create(retColor, retDistance);
     }
 
 }

@@ -62,13 +62,6 @@ public class FTCRobot {
 
     private final HardwareMap hardwareMap;
     public final StartParameters startParameters;
-
-    //## Needs to be static so that Roadrunner MecanumDrive can see it.
-    // This makes for a really unfortunate dependency - FTCRobot must
-    // be constructed before MecanumDrive; otherwise driveTrainDeviceNames
-    // will be null. We do this to be consistent with our architecture:
-    // the device names originate in RobotConfig.xml.
-    private static DriveTrainDeviceNames driveTrainDeviceNames;
     public final TeleOpDriveTrain teleOpDriveTrain;
     public final boolean roadrunnerDriveTrainInConfiguration;
     public final TeleOpSettings teleOpSettings;
@@ -113,7 +106,6 @@ public class FTCRobot {
         try {
             // Get the startup parameters (including the exact file name of
             // RobotConfig XXX.xml).
-            // Get the configurable startup parameters.
             StartParametersXML startParametersXML = new StartParametersXML(xmlDirectory);
             startParameters = startParametersXML.getStartParameters();
             RobotLogCommon.c(TAG, "Configuring the robot from " + startParameters.robotConfigFilename);
@@ -134,7 +126,6 @@ public class FTCRobot {
                 if (pRunType == RobotConstants.RunType.TELEOP || pRunType == RobotConstants.RunType.TELEOP_VISION_PREVIEW) {
                     teleOpDriveTrain = new TeleOpDriveTrain(hardwareMap, configXPath, DRIVE_TRAIN_ELEMENT_NAME);
                     roadrunnerDriveTrainInConfiguration = false;
-                    driveTrainDeviceNames = null;
 
                     XPathAccess teleOpSettingsXPath = configXML.getPath(TELEOP_SETTINGS_ELEMENT_NAME);
                     String logging_level = teleOpSettingsXPath.getRequiredTextInRange("log_level", teleOpSettingsXPath.validRange("d", "v", "vv", "off"));
@@ -144,20 +135,13 @@ public class FTCRobot {
                     teleOpSettings = new TeleOpSettings(logging_level, driveTrainPowerHigh, driveTrainPowerLow);
                     RobotLogCommon.c(TAG, "TeleOp configuration: log level " + teleOpSettings.logLevel);
                     RobotLogCommon.setMostDetailedLogLevel(teleOpSettings.logLevel);
-                } else {
+                } else { // RunType is AUTONOMOUS (with Roadrunner)
                     roadrunnerDriveTrainInConfiguration = true;
-
-                    // Roadrunner is in the configuration so provide the drive train
-                    // device names from RobotConfig.xml.
-                    driveTrainDeviceNames = new DriveTrainDeviceNames(configXPath, DRIVE_TRAIN_ELEMENT_NAME,
-                            MotorId.LEFT_FRONT_DRIVE, MotorId.RIGHT_FRONT_DRIVE,
-                            MotorId.LEFT_BACK_DRIVE, MotorId.RIGHT_BACK_DRIVE);
                     teleOpDriveTrain = null;
                     teleOpSettings = null;
                 }
             } else {
                 roadrunnerDriveTrainInConfiguration = false;
-                driveTrainDeviceNames = null;
                 teleOpDriveTrain = null;
                 teleOpSettings = null;
             }
@@ -232,10 +216,6 @@ public class FTCRobot {
             String eMessage = ex.getMessage() == null ? "**no error message**" : ex.getMessage();
             throw new AutonomousRobotException(TAG, "IOException " + eMessage);
         }
-    }
-
-    public static DriveTrainDeviceNames getDriveTrainDeviceNames() {
-        return driveTrainDeviceNames;
     }
 
     // The FTC SDK uses a string such as "Webcam 1" to connect
