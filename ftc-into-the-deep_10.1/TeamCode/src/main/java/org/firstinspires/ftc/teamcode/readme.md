@@ -1,3 +1,3 @@
 ## TeamCode Module
 
-Base project for IntoTheDeep; combination of Roadrunner and FtcCenterStageCore_9.2.
+Base project for IntoTheDeep built on the Roadrunner quickstart for FTC version 10.1.
