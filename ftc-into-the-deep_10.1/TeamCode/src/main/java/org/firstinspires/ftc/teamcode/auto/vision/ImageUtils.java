@@ -208,8 +208,7 @@ public class ImageUtils {
         RobotLogCommon.d(TAG, "Actual inRange HSV arguments: saturation low " + pSatLowThreshold + ", value low " + pValLowThreshold);
 
         // Sanity check for hue.
-        if (!((pHueLow >= 0 && pHueLow <= 180) && (pHueHigh >= 0 && pHueHigh <= 180) &&
-                (pHueLow != pHueHigh)))
+        if (!((pHueLow >= 0 && pHueLow <= 180) && (pHueHigh >= 0 && pHueHigh <= 180)))
             throw new AutonomousRobotException(TAG, "Hue out of range");
 
         // Normal hue range.
@@ -342,7 +341,8 @@ public class ImageUtils {
             intBuff[i] = byteBuff[i] & 0xFF;
 
         Arrays.sort(intBuff);
-        return (intBuff[buffLength / 2] + (intBuff[(buffLength / 2) - 1])) / 2;
+        int median = buffLength % 2 != 0 ? intBuff[buffLength / 2] : (intBuff[buffLength / 2] + (intBuff[(buffLength / 2) - 1])) / 2;
+        return median;
     }
 
     // Sort contours by area in descending order.
